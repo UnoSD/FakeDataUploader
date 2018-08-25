@@ -9,7 +9,6 @@
     <Compile Include="Result.fs" />
     <Compile Include="Concurrency.fs" />
     <Compile Include="Units.fs" />
-    <Compile Include="List.fs" />
     <Compile Include="Core.fs" />
     <Compile Include="FreeFaker.fs" />
     <Compile Include="Job.fs" />

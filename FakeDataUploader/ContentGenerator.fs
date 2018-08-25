@@ -2,25 +2,28 @@
 
 open FSharpx.Collections
 
-let minRequestSize createJson contactIdentifier =
+let private minRequestSize createJson contactIdentifier =
     createJson contactIdentifier |>
     MinimunDataFaker.interpret |>
     getSize
 
-let countSizeFolder (total, strings) value =
-    (value |> getSize |> (+) total, value :: strings)
-
-let isMaxLength minJson contactIdentifier maxRequestLength (total, _) =
+let private isMaxLength minJson contactIdentifier maxRequestLength total =
     (total + (minRequestSize minJson contactIdentifier)) > maxRequestLength
 
 let getItemsJson createJson maxRequestLength id count fakerInterpreter =
     let isMaxLength =
         isMaxLength createJson id maxRequestLength
 
+    let unfolder (total, xs) =
+        match xs with
+        | LazyList.Nil             -> None
+        | _ when isMaxLength total -> None
+        | LazyList.Cons (x, xs)    -> Some (x, (x |> getSize |> (+) total, xs))
+
     id |>
     LazyList.repeat |>
     LazyList.take count |>
     LazyList.map (createJson >> fakerInterpreter) |>
-    LazyList.folde countSizeFolder isMaxLength (0.0<KB>, List.empty<string>) |>
-    snd |>
-    (fun jsons -> (jsons.Length, jsons |> String.concat "," |> sprintf "[%s]"))
+    (fun json -> (0.0<KB>, json)) |>
+    LazyList.unfold unfolder |>
+    (fun jsons -> (jsons.Length(), jsons |> String.concat "," |> sprintf "[%s]"))

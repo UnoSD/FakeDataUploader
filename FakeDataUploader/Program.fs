@@ -8,7 +8,7 @@ open Result
 let user             = "user"
 let password         = "password"
 let endpoint         = "https://endpoin.t"
-let objectsCount     = 120000
+let objectsCount     = 12000000
 let parallelism      = 1
 let maxRequestLength = 15360.<KB>
 
