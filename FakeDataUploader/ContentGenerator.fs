@@ -14,8 +14,8 @@ let getItemsJson createJson maxRequestLength id count fakerInterpreter =
     let isMaxLength =
         isMaxLength createJson id maxRequestLength
 
-    let unfolder (total, xs) =
-        match xs with
+    let unfolder (total, strings) =
+        match strings with
         | LazyList.Nil             -> None
         | _ when isMaxLength total -> None
         | LazyList.Cons (x, xs)    -> Some (x, (x |> getSize |> (+) total, xs))
